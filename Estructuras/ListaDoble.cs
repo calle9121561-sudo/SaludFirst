@@ -1,103 +1,96 @@
-namespace SaludFirst.Estructuras;
+using System;
 
-public class NodoDoble<T>
+namespace SaludFirst.Estructuras
 {
-    public T Dato;
-    public NodoDoble<T>? Anterior;
-    public NodoDoble<T>? Siguiente;
-
-    public NodoDoble(T dato)
+    public class NodoDoble<T> where T : class
     {
-        Dato = dato;
-        Anterior = null;
-        Siguiente = null;
-    }
-}
+        public T Dato { get; set; }
+        public NodoDoble<T>? Siguiente { get; set; }
+        public NodoDoble<T>? Anterior { get; set; }
 
-/// <summary>
-/// LISTA DOBLEMENTE ENLAZADA (CV2): historial médico de un paciente.
-/// Permite navegar hacia atrás y hacia adelante entre atenciones.
-/// 
-/// RECURSIVIDAD (CV1): el método BuscarRecursivo recorre la lista
-/// llamándose a sí mismo, sin bucles.
-/// </summary>
-public class ListaDoble<T>
-{
-    private NodoDoble<T>? cabeza;
-    private NodoDoble<T>? cola;
-    private int contador;
-
-    public bool EstaVacia() => cabeza == null;
-    public int Contar() => contador;
-
-    public void Agregar(T dato)
-    {
-        NodoDoble<T> nuevo = new NodoDoble<T>(dato);
-        if (cabeza == null)
+        public NodoDoble(T dato)
         {
-            cabeza = nuevo;
-            cola = nuevo;
-        }
-        else
-        {
-            nuevo.Anterior = cola;
-            cola!.Siguiente = nuevo;
-            cola = nuevo;
-        }
-        contador++;
-    }
-
-    public void MostrarCronologico(Action<T> accionMostrar)
-    {
-        if (cabeza == null) { Console.WriteLine("    (historial vacío)"); return; }
-        NodoDoble<T>? actual = cabeza;
-        while (actual != null)
-        {
-            accionMostrar(actual.Dato);
-            actual = actual.Siguiente;
+            Dato = dato;
+            Siguiente = null;
+            Anterior = null;
         }
     }
 
-    public void MostrarInverso(Action<T> accionMostrar)
+    public class ListaDoble<T> where T : class
     {
-        if (cola == null) { Console.WriteLine("    (historial vacío)"); return; }
-        NodoDoble<T>? actual = cola;
-        while (actual != null)
-        {
-            accionMostrar(actual.Dato);
-            actual = actual.Anterior;
-        }
-    }
+        private NodoDoble<T>? cabeza;
+        private NodoDoble<T>? cola;
+        private int contador;
 
-    public T? BuscarRecursivo(NodoDoble<T>? nodo, Func<T, bool> condicion)
-    {
-        if (nodo == null) return default;
-        if (condicion(nodo.Dato)) return nodo.Dato;
-        return BuscarRecursivo(nodo.Siguiente, condicion);
-    }
+        public int Contador => contador;
 
-    public T? Buscar(Func<T, bool> condicion)
-        => BuscarRecursivo(cabeza, condicion);
+        public void Agregar(T dato)
+        {
+            NodoDoble<T> nuevo = new NodoDoble<T>(dato);
+            if (cabeza == null)
+            {
+                cabeza = nuevo;
+                cola = nuevo;
+            }
+            else
+            {
+                cola!.Siguiente = nuevo;
+                nuevo.Anterior = cola;
+                cola = nuevo;
+            }
+            contador++;
+        }
 
-    private NodoDoble<T>? cursor;
-    public void IniciarNavegacion() => cursor = cabeza;
-    public T? Actual() => cursor?.Dato;
-    public T? Avanzar()
-    {
-        if (cursor?.Siguiente != null)
+        public void Mostrar()
         {
-            cursor = cursor.Siguiente;
-            return cursor.Dato;
+            NodoDoble<T>? actual = cabeza;
+            while (actual != null)
+            {
+                Console.WriteLine(actual.Dato);
+                actual = actual.Siguiente;
+            }
         }
-        return default;
-    }
-    public T? Retroceder()
-    {
-        if (cursor?.Anterior != null)
+
+        public void MostrarInverso(Action<T> accionMostrar)
         {
-            cursor = cursor.Anterior;
-            return cursor.Dato;
+            NodoDoble<T>? actual = cola;
+            while (actual != null)
+            {
+                accionMostrar(actual.Dato);
+                actual = actual.Anterior;
+            }
         }
-        return default;
+
+        public T? BuscarRecursivo(NodoDoble<T>? nodo, Func<T, bool> condicion)
+        {
+            if (nodo == null) return default;
+            if (condicion(nodo.Dato)) return nodo.Dato;
+            return BuscarRecursivo(nodo.Siguiente, condicion);
+        }
+
+        public T? Buscar(Func<T, bool> condicion)
+            => BuscarRecursivo(cabeza, condicion);
+
+        private NodoDoble<T>? cursor;
+        public void IniciarNavegacion() => cursor = cabeza;
+        public T? Avanzar()
+        {
+            if (cursor?.Siguiente != null)
+            {
+                cursor = cursor.Siguiente;
+                return cursor.Dato;
+            }
+            return cursor != null ? cursor.Dato : default;
+        }
+
+        public T? Retroceder()
+        {
+            if (cursor?.Anterior != null)
+            {
+                cursor = cursor.Anterior;
+                return cursor.Dato;
+            }
+            return cursor != null ? cursor.Dato : default;
+        }
     }
 }

@@ -1,53 +1,49 @@
-namespace SaludFirst.Estructuras;
+using System;
 
-public class NodoPila<T>
+namespace SaludFirst.Estructuras
 {
-    public T Dato;
-    public NodoPila<T>? Siguiente;
-
-    public NodoPila(T dato)
+    public class NodoPila
     {
-        Dato = dato;
-        Siguiente = null;
-    }
-}
+        public string Dato { get; set; }
+        public NodoPila? Siguiente { get; set; }
 
-public class Pila<T>
-{
-    private NodoPila<T>? tope;
-    private int contador;
-
-    public bool EstaVacia() => tope == null;
-    public int Contar() => contador;
-
-    public void Push(T dato)
-    {
-        NodoPila<T> nuevo = new NodoPila<T>(dato);
-        nuevo.Siguiente = tope;
-        tope = nuevo;
-        contador++;
+        public NodoPila(string dato)
+        {
+            Dato = dato;
+            Siguiente = null;
+        }
     }
 
-    public T? Pop()
+    public class Pila
     {
-        if (tope == null) return default;
-        T dato = tope.Dato;
-        tope = tope.Siguiente;
-        contador--;
-        return dato;
-    }
+        private NodoPila? cima;
+        private int contador;
 
-    public T? Peek() => tope?.Dato;
-}
+        public int Contador => contador;
 
-public class AccionMedica
-{
-    public string Descripcion { get; set; }
-    public Action Revertir { get; set; }
+        public void Apilar(string dato)
+        {
+            NodoPila nuevo = new NodoPila(dato);
+            nuevo.Siguiente = cima;
+            cima = nuevo;
+            contador++;
+        }
 
-    public AccionMedica(string descripcion, Action revertir)
-    {
-        Descripcion = descripcion;
-        Revertir = revertir;
+        public string? Desapilar()
+        {
+            if (cima == null) return null;
+            string dato = cima.Dato;
+            cima = cima.Siguiente;
+            contador--;
+            return dato;
+        }
+
+        public string? VerCima()
+        {
+            if (cima == null) return null;
+            return cima.Dato;
+        }
+
+        public bool EstaVacia() => cima == null;
     }
 }
