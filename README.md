@@ -1,7 +1,7 @@
 # 🩺 SaludFirst — Sistema de Atención y Triaje Inteligente
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Synin-i/EcoRuta/refs/heads/main/Isologo%20(1).png" alt="SaludFirst Isologo" width="400"/>
+  <img src="portada.png" alt="SaludFirst Portada" width="500"/>
 </p>
 
 ---
@@ -20,31 +20,31 @@
 ## 📑 ESTRUCTURA DEL DOCUMENTO DE PROYECTO
 
 ### Índice
-1. **Introducción**
-   - 1.1 Contexto General
-   - 1.2 Problemática
-   - 1.3 Justificación
-   - 1.4 Alcance
-   - 1.5 Limitaciones
-2. **Objetivos**
-   - 2.1 Objetivo General
-   - 2.2 Objetivos Específicos
-3. **Marco Teórico**
-   - 3.1 Programación Orientada a Objetos (POO) y Genéricos
-   - 3.2 Estructuras de Datos Dinámicas (Colas de Prioridad, Listas Dobles, Pilas)
-   - 3.3 Reglas de Nulabilidad y Restricciones en C# (.NET 8.0)
-   - 3.4 Manejo de Excepciones y Validación de Entradas
-4. **Desarrollo del Proyecto**
-   - 4.1 Descripción General del Sistema
-   - 4.2 Estructura del Sistema (Modularización)
-   - 4.3 Gestión Dinámica de Pacientes
-   - 4.4 Sistema de Triaje y Cola de Prioridad
-   - 4.5 Historial de Acciones y Control con Pilas
-   - 4.6 Búsqueda y Organización de Registros
-5. **Tecnologías Utilizadas**
-6. **Conclusiones y Recomendaciones**
-   - 6.1 Conclusiones
-   - 6.2 Recomendaciones
+- **1. Introducción**
+  - 1.1 Contexto General
+  - 1.2 Problemática
+  - 1.3 Justificación
+  - 1.4 Alcance
+  - 1.5 Limitaciones
+- **2. Objetivos**
+  - 2.1 Objetivo General
+  - 2.2 Objetivos Específicos
+- **3. Marco Teórico**
+  - 3.1 Programación Orientada a Objetos (POO) y Genéricos
+  - 3.2 Estructuras de Datos Dinámicas (Colas de Prioridad, Listas Dobles, Pilas)
+  - 3.3 Reglas de Nulabilidad y Restricciones en C# (.NET 8.0)
+  - 3.4 Manejo de Excepciones y Validación de Entradas
+- **4. Desarrollo del Proyecto**
+  - 4.1 Descripción General del Sistema
+  - 4.2 Estructura del Sistema (Modularización)
+  - 4.3 Gestión Dinámica de Pacientes
+  - 4.4 Sistema de Triaje y Cola de Prioridad
+  - 4.5 Historial de Acciones y Control con Pilas
+  - 4.6 Búsqueda y Organización de Registros
+- **5. Tecnologías Utilizadas**
+- **6. Conclusiones y Recomendaciones**
+  - 6.1 Conclusiones
+  - 6.2 Recomendaciones
 
 ---
 
@@ -72,7 +72,7 @@ El software opera como una aplicación de consola en el entorno local, limitando
 ### 2.1 Objetivo General
 Desarrollar una aplicación de consola robusta en C# orientada a la gestión hospitalaria y la optimización de flujos de emergencia, aplicando estructuras de datos dinámicas avanzadas para clasificar pacientes según su nivel de urgencia, administrar historiales médicos y coordinar recursos clínicos bajo principios de eficiencia algorítmica y programación modular.
 
-### 2.2 Objetivos Especificos
+### 2.2 Objetivos Específicos
 - Implementar estructuras de datos dinámicas personalizadas (Colas de Prioridad, Listas Dobles y Pilas).
 - Registrar y administrar entidades clínicas fundamentales como pacientes, atenciones y medicamentos.
 - Gestionar un sistema de triaje clínico automatizado que garantice que la atención prioritaria sea atendida primero bajo criterios de gravedad.
@@ -141,6 +141,3 @@ El desarrollo de **SaludFirst** demostró la viabilidad de aplicar principios de
 Se recomienda a futuro migrar la persistencia en memoria a una base de datos relacional (como SQLite o SQL Server) para mejorar la escalabilidad, así como desarrollar una interfaz gráfica de usuario (GUI) o web que facilite la visualización de los flujos clínicos a gran escala.
 
 ---
-
-## 👤 Autor
-* **Zoely Lizbeth Calle Susara** — *Ingeniería de Sistemas* (Universidad Privada Domingo Savio - Sede La Paz)
