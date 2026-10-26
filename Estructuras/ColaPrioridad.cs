@@ -1,90 +1,58 @@
+using System;
+using System.Collections.Generic;
 using SaludFirst.Modelos;
 
-namespace SaludFirst.Estructuras;
-
-/// <summary>
-/// NODO de la cola de prioridad (memoria dinámica, CV1).
-/// </summary>
-public class NodoPaciente
+namespace SaludFirst.Estructuras
 {
-    public Paciente Dato;
-    public NodoPaciente? Siguiente;
-
-    public NodoPaciente(Paciente dato)
+    public class NodoColaPrioridad
     {
-        Dato = dato;
-        Siguiente = null;
+        public Paciente Paciente { get; set; }
+        public int Prioridad { get; set; }
+        public NodoColaPrioridad? Siguiente { get; set; }
+
+        public NodoColaPrioridad(Paciente paciente, int prioridad)
+        {
+            Paciente = paciente;
+            Prioridad = prioridad;
+            Siguiente = null;
+        }
     }
-}
 
-/// <summary>
-/// COLA DE PRIORIDAD (CV1): los pacientes con prioridad ALTA se atienden
-/// primero. Dentro de una misma prioridad se respeta el orden de llegada
-/// (FIFO estable), tal como ocurre en un centro de salud real.
-/// </summary>
-public class ColaPrioridad
-{
-    private NodoPaciente? frente;
-    private int contador;
-
-    public bool EstaVacia() => frente == null;
-    public int Contar() => contador;
-
-    public void Encolar(Paciente paciente)
+    public class ColaPrioridad
     {
-        NodoPaciente nuevo = new NodoPaciente(paciente);
+        private NodoColaPrioridad? frente;
 
-        if (frente == null)
+        public void Encolar(Paciente paciente, int prioridad)
         {
-            frente = nuevo;
-        }
-        else if (nuevo.Dato.Prioridad > frente.Dato.Prioridad)
-        {
-            nuevo.Siguiente = frente;
-            frente = nuevo;
-        }
-        else
-        {
-            NodoPaciente actual = frente;
-            while (actual.Siguiente != null &&
-                   actual.Siguiente.Dato.Prioridad >= paciente.Prioridad)
+            NodoColaPrioridad nuevo = new NodoColaPrioridad(paciente, prioridad);
+
+            // Si la cola está vacía o el nuevo tiene mayor prioridad (número menor) que el frente
+            if (frente == null || prioridad < frente.Prioridad)
             {
-                actual = actual.Siguiente;
+                nuevo.Siguiente = frente;
+                frente = nuevo;
             }
-            nuevo.Siguiente = actual.Siguiente;
-            actual.Siguiente = nuevo;
+            else
+            {
+                NodoColaPrioridad actual = frente;
+                while (actual.Siguiente != null && actual.Siguiente.Prioridad <= prioridad)
+                {
+                    actual = actual.Siguiente;
+                }
+                nuevo.Siguiente = actual.Siguiente;
+                actual.Siguiente = nuevo;
+            }
         }
-        contador++;
-    }
 
-    public Paciente? Desencolar()
-    {
-        if (frente == null) return null;
-        Paciente paciente = frente.Dato;
-        frente = frente.Siguiente;
-        contador--;
-        return paciente;
-    }
-
-    public Paciente? VerFrente() => frente?.Dato;
-
-    /// <summary>
-    /// Muestra la fila completa sin modificarla (útil para el reporte diario).
-    /// </summary>
-    public void MostrarFila()
-    {
-        if (frente == null)
+        public Paciente? Atender()
         {
-            Console.WriteLine("    (fila vacía)");
-            return;
+            if (frente == null) return null;
+
+            Paciente pacienteAtendido = frente.Paciente;
+            frente = frente.Siguiente;
+            return pacienteAtendido;
         }
-        NodoPaciente? actual = frente;
-        int posicion = 1;
-        while (actual != null)
-        {
-            Console.WriteLine($"    {posicion}. {actual.Dato}");
-            actual = actual.Siguiente;
-            posicion++;
-        }
+
+        public bool EstaVacia() => frente == null;
     }
 }

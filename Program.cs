@@ -1,135 +1,112 @@
-﻿using System.Text;
-using SaludFirst.Servicios;
+﻿using System;
 using SaludFirst.Modelos;
+using SaludFirst.Servicios;
 
-Console.OutputEncoding = Encoding.UTF8;
-SistemaSalud sistema = new SistemaSalud();
-sistema.CargarCatalogoInicial();
-int opcion = 0;
-
-do
+namespace SaludFirst
 {
-    Console.Clear();
-    Console.WriteLine("╔══════════════════════════════════════════════╗");
-    Console.WriteLine("║   🏥 SaludFirst — Triaje Inteligente UPDS    ║");
-    Console.WriteLine("╠══════════════════════════════════════════════╣");
-    Console.WriteLine("║ 1. Registrar paciente (con triaje automático)║");
-    Console.WriteLine("║ 2. Ver fila de espera                        ║");
-    Console.WriteLine("║ 3. Atender siguiente paciente                ║");
-    Console.WriteLine("║ 4. Registrar atención médica (historial)     ║");
-    Console.WriteLine("║ 5. Ver historial                             ║");
-    Console.WriteLine("║ 6. Buscar en historial                       ║");
-    Console.WriteLine("║ 7. Catálogo de medicamentos                  ║");
-    Console.WriteLine("║ 8. Buscar medicamento por código             ║");
-    Console.WriteLine("║ 9. Deshacer última acción                    ║");
-    Console.WriteLine("║ 10. Reporte diario                           ║");
-    Console.WriteLine("║ 0. Salir                                     ║");
-    Console.WriteLine("╚══════════════════════════════════════════════╝");
-    Console.Write("\n  Opción: ");
-    opcion = int.Parse(Console.ReadLine() ?? "0");
-    Console.WriteLine();
-
-    switch (opcion)
+    class Program
     {
-        case 1:
-            Console.Write("  Nombre: ");
-            string nombre = Console.ReadLine() ?? "";
-            Console.Write("  CI: ");
-            string ci = Console.ReadLine() ?? "";
-            Console.Write("  Edad: ");
-            int edad = int.Parse(Console.ReadLine() ?? "0");
-            Console.Write("  Síntoma: ");
-            string sintoma = Console.ReadLine() ?? "";
-            Paciente p = sistema.RegistrarPaciente(nombre, ci, edad, sintoma);
-            Console.WriteLine($"\n  ✅ Registrado → Turno {p.Turno} | Prioridad: {p.Prioridad}");
-            break;
+        static void Main(string[] args)
+        {
+            SistemaSalud sistema = new SistemaSalud();
+            bool salir = false;
 
-        case 2:
-            Console.WriteLine("  🕐 Fila de espera (primero los de mayor prioridad):");
-            sistema.Fila.MostrarFila();
-            break;
+            while (!salir)
+            {
+                Console.Clear();
+                Console.WriteLine("========================================");
+                Console.WriteLine("   🩺 SALUDFIRST - SISTEMA DE TRIAJE    ");
+                Console.WriteLine("========================================");
+                Console.WriteLine("1. Registrar Paciente");
+                Console.WriteLine("2. Agregar a Cola de Triaje");
+                Console.WriteLine("3. Atender Siguiente Paciente");
+                Console.WriteLine("4. Ver Última Acción Registrada");
+                Console.WriteLine("5. Deshacer / Desapilar Última Acción");
+                Console.WriteLine("6. Salir");
+                Console.Write("\nSeleccione una opción: ");
 
-        case 3:
-            Paciente? atendido = sistema.AtenderSiguiente();
-            if (atendido == null)
-                Console.WriteLine("  ⚠ No hay pacientes en espera.");
-            else
-                Console.WriteLine($"  🩺 Atendiendo: {atendido}");
-            break;
+                string? opcion = Console.ReadLine();
 
-        case 4:
-            Console.Write("  CI del paciente atendido: ");
-            string ciAtencion = Console.ReadLine() ?? "";
-            Console.Write("  Diagnóstico: ");
-            string dx = Console.ReadLine() ?? "";
-            Console.Write("  Medicamento recetado: ");
-            string rx = Console.ReadLine() ?? "";
-            sistema.RegistrarAtencion(ciAtencion, dx, rx);
-            sistema.RegistrarAccionDeshacible(
-                $"Atención a {ciAtencion}",
-                new SaludFirst.Estructuras.AccionMedica(
-                    $"Eliminar atención de {ciAtencion}",
-                    () => Console.WriteLine($"    ↩ Revertido: atención de {ciAtencion}"))
-            );
-            break;
+                switch (opcion)
+                {
+                    case "1":
+                        Console.Clear();
+                        Console.WriteLine("--- REGISTRAR PACIENTE ---");
+                        Console.Write("Ingrese Nombre del Paciente: ");
+                        string nombre = Console.ReadLine() ?? "Desconocido";
+                        Console.Write("Ingrese Cédula de Identidad (CI): ");
+                        string ci = Console.ReadLine() ?? "S/N";
+                        Console.Write("Ingrese Edad: ");
+                        int.TryParse(Console.ReadLine(), out int edad);
+                        Console.Write("Ingrese Síntoma / Diagnóstico: ");
+                        string sintoma = Console.ReadLine() ?? "General";
+                        Console.Write("Ingrese Turno (número): ");
+                        int.TryParse(Console.ReadLine(), out int turno);
 
-        case 5:
-            Console.Write("  CI del paciente: ");
-            string ciHist = Console.ReadLine() ?? "";
-            Console.Write("  ¿Inverso? (s/n): ");
-            bool inverso = (Console.ReadLine() ?? "n").Trim().ToLower() == "s";
-            Console.WriteLine($"\n  📋 Historial de {ciHist}:");
-            sistema.VerHistorial(ciHist, inverso);
-            break;
+                        // Por defecto se puede registrar con una prioridad Baja o la que prefieras inicialmente
+                        Prioridad prioridadReg = Prioridad.Baja;
 
-        case 6:
-            Console.Write("  CI del paciente: ");
-            string ciBusq = Console.ReadLine() ?? "";
-            Console.Write("  Palabra clave a buscar: ");
-            string clave = Console.ReadLine() ?? "";
-            Atencion? encontrada = sistema.BuscarEnHistorial(ciBusq, clave);
-            Console.WriteLine(encontrada == null
-                ? "  ❌ Sin coincidencias (recorrido recursivo completo)."
-                : $"  ✅ Encontrado: {encontrada}");
-            break;
+                        Paciente nuevoPaciente = new Paciente(nombre, ci, edad, sintoma, prioridadReg, turno);
+                        sistema.RegistrarPaciente(nuevoPaciente);
+                        break;
 
-        case 7:
-            Console.WriteLine("  💊 Catálogo de medicamentos (inorden = ordenado por código):");
-            sistema.MostrarCatalogo();
-            break;
+                    case "2":
+                        Console.Clear();
+                        Console.WriteLine("--- AGREGAR A TRIAJE ---");
+                        Console.Write("Ingrese Nombre del Paciente a encolar: ");
+                        string nomPaciente = Console.ReadLine() ?? "Desconocido";
+                        Console.Write("Ingrese CI: ");
+                        string ciPaciente = Console.ReadLine() ?? "S/N";
+                        Console.Write("Ingrese Edad: ");
+                        int.TryParse(Console.ReadLine(), out int edadPaciente);
+                        Console.Write("Ingrese Síntoma: ");
+                        string sintomaPaciente = Console.ReadLine() ?? "Urgencia";
+                        
+                        Console.Write("Ingrese Nivel de Prioridad (1 = Baja, 2 = Media, 3 = Alta): ");
+                        int.TryParse(Console.ReadLine(), out int valorPrioridad);
+                        Prioridad prioridadTriaje = (Prioridad)Math.Clamp(valorPrioridad, 1, 3);
 
-        case 8:
-            Console.Write("  Código del medicamento (ej. MED-030): ");
-            string codMed = Console.ReadLine() ?? "";
-            Medicamento? med = sistema.BuscarMedicamento(codMed);
-            Console.WriteLine(med == null
-                ? "  ❌ Medicamento no encontrado en el BST."
-                : $"  ✅ {med}");
-            break;
+                        Console.Write("Ingrese Turno: ");
+                        int.TryParse(Console.ReadLine(), out int turnoTriaje);
 
-        case 9:
-            string? deshecha = sistema.DeshacerUltimaAccion();
-            Console.WriteLine(deshecha == null
-                ? "  ⚠ No hay acciones que deshacer (pila vacía)."
-                : $"  ↩ Deshecho: {deshecha} | Restantes: {sistema.AccionesPendientesDeDeshacer()}");
-            break;
+                        Paciente pacienteTriaje = new Paciente(nomPaciente, ciPaciente, edadPaciente, sintomaPaciente, prioridadTriaje, turnoTriaje);
+                        sistema.AgregarATriaje(pacienteTriaje, (int)prioridadTriaje);
+                        break;
 
-        case 10:
-            sistema.GenerarReporteDiario();
-            break;
+                    case "3":
+                        Console.Clear();
+                        Console.WriteLine("--- ATENDER PACIENTE ---");
+                        sistema.AtenderSiguientePaciente();
+                        break;
 
-        case 0:
-            Console.WriteLine("  👋 Hasta luego.");
-            break;
+                    case "4":
+                        Console.Clear();
+                        Console.WriteLine("--- ÚLTIMA ACCIÓN ---");
+                        sistema.VerUltimaAccion();
+                        break;
 
-        default:
-            Console.WriteLine("  ⚠ Opción inválida.");
-            break;
+                    case "5":
+                        Console.Clear();
+                        Console.WriteLine("--- DESHACER ACCIÓN ---");
+                        sistema.DeshacerUltimaAccion();
+                        break;
+
+                    case "6":
+                        salir = true;
+                        Console.WriteLine("\n¡Gracias por usar SaludFirst! Saliendo del sistema...");
+                        break;
+
+                    default:
+                        Console.WriteLine("\nOpción no válida. Presione cualquier tecla para continuar.");
+                        break;
+                }
+
+                if (!salir)
+                {
+                    Console.WriteLine("\nPresione cualquier tecla para volver al menú...");
+                    Console.ReadKey();
+                }
+            }
+        }
     }
-
-    if (opcion != 0)
-    {
-        Console.Write("\n  Presione ENTER para continuar...");
-        Console.ReadLine();
-    }
-} while (opcion != 0);
+}
